@@ -26,7 +26,7 @@ class BosoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const seed = Colors.deepOrange;
     return MaterialApp(
-      title: 'Boso',
+      title: 'boso',
       theme: ThemeData(colorSchemeSeed: seed),
       darkTheme: ThemeData(colorSchemeSeed: seed, brightness: Brightness.dark),
       home: home,

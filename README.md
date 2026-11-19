@@ -1,4 +1,4 @@
-# Boso
+# boso
 
 Android app for per-room control of TECH L-4X WiFi underfloor heating through the eModul cloud API. No server of its own: the phone talks to `https://emodul.eu/api/v1` directly.
 
