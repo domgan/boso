@@ -2,6 +2,8 @@
 
 Android app for per-room control of TECH L-4X WiFi underfloor heating through the eModul cloud API. No server of its own: the phone talks to `https://emodul.eu/api/v1` directly.
 
+<img src="assets/screenshot.png" alt="L-4X Wi-Fi zones screen" width="320">
+
 The API spec is in `api/emodul.yaml`, with the referenced path files under `api/tags/`. Temperatures go over the wire in tenths of a degree.
 
 ## Token
