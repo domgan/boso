@@ -1,0 +1,574 @@
+openapi: 3.0.3
+info:
+  title: eModul API Version 1.0
+  description: |
+    <details>
+       <summary><b>Data types format</b></summary>
+             - value type = -1: Value invisible.<br>
+             - value type = 0: Ordinary value.<br>
+             - value type = 1: Seconds.<br>
+             - value type = 2: Minutes.<br>
+             - value type = 3: Hours.<br>
+             - value type = 4: Decimal value. The value should be transformed according to the formula <i>value  / 10</i><br>
+             - value type = 5: hundredth value. The value should be transformed according to the formula <i>value  / 100</i><br>
+             - value type = 6: Degrees Celsius.<br>
+             - value type = 7: Tenth degrees Celsius. The value should be transformed according to the formula <i>value  / 10</i> <br>
+             - value type = 8: Percentages.<br>
+             - value type = 9: Promile.<br>
+             - value type = 10: kW.<br>
+             - value type = 11: kWh.<br>
+             - value type = 12: Volts.<br>
+             - value type = 13: Time written as hours * 60 + min, shown as 00:00 - 23:59<br>
+             - value type = 14: Days<br>
+             - value type = 15: Run<br>
+             - value type = 16: Time in seconds shown as XXmin XXsec<br>
+             - value type = 17: Time in minutes shown as XXhrs XXmin<br>
+             - value type = 18: Inscription from CN Description Base, or flame brightness in status history [0-8000]<br>
+             - value type = 19: kWh value with a decimal point<br>
+             - value type = 20: MWh value<br>
+             - value type = 21: MWh value with a decimal point.The value should be transformed according to the formula <i>value  / 10</i><br>
+             - value type = 22: L / min value with decimals.The value should be transformed according to the formula <i>value  / 10</i><br>
+             - value type = 23: pressure in bar with decimals.The value should be transformed according to the formula <i>value  / 10</i><br>
+             - value type = 24: time point = ux epoch (integer)<br>
+             - value type = 25: Time in seconds shown as XX days, XX hours. XX min. XX sec. The value should be transformed value/86400 for days, value/3600 for hours and value/60 for minutes<br>
+             - value type = 26: kW with a decimal point. The value should be transformed according to the formula <i>value  / 10</i><br>
+             - value type = 27: RPM<br>
+             - value type = 28: Enabled / Disabled - [1/0]. The value should be transformed for example <i>value = value === 1 ? subtitle(Text.On) : subtitle(Text.Off)</i><br>
+             - value type = 29: Watt<br>
+             - value type = 30: L / hr value with decimals. The value should be transformed according to the formula <i><i>value  / 100</i></i><br>
+             - value type = 31: Time in hours shown as XX days, XX hrs. The value should be transformed for example (JavaScript) <i>if (typeof value === 'number') {const [hour, day] = getHoursAndDays(value);value =(day > 0? ${doubleDigits(Math.round(day))} ${subtitle(Text.Days)} : '') + ${doubleDigits(hour)} ${subtitle(Text.Hour)} ${subtit};}</i><br>
+             - value type = 32: K (Kelvin)<br>
+             - value type = 33: Percentage with decimals<br>
+             - value type = 34: Wh<br>
+             - value type = 35: Value converted to HEX (0-F)<br>
+             - value type = 36: kWh value with hundredth. The value should be transformed according to the formula <i>value  / 100</i><br>
+             - value type = 37: XX Years XX days (sent as years * 365 + days)<br>
+             - value type = 38: COP value with decimal places<br>
+             - Value type = 39: Value l / m<br>
+             - value type = 40: kWh value with thousandths. The value should be transformed according to the formula <i>value  / 1000</i><br>
+             - value type = 41: liters.
+             - value type = 42: cubic meters. 
+     </details>
+     <details>
+        <summary><b>Description of zone parameters</b></summary>
+                 <pre><b>"zone"</b>: {
+                 <pre>
+                 "id": 121,
+                 "parentId": 1500,
+                 "time": "2023-02-06T11:21:02.846309",
+                 "duringChange": false,
+                 "index": 1,
+                 "currentTemperature": 223,
+                 "setTemperature": 215,
+                 "flags": {
+                     "relayState": "off",
+                     "minOneWindowOpen": false,
+                     "algorithm": "heating",
+                     "floorSensor": 0,
+                     "humidityAlgorytm": 0,
+                     "zoneExcluded": 0
+                     </pre>
+                 },</pre>
+     </details>
+     <details>
+        <summary><b>Module types</b></summary>
+                  - value type = 0: pellet<br>
+                  - value type = 1: zones_controller<br>
+                  - value type = 2: coal<br>
+                  - value type = 3: solar<br>
+                  - value type = 4: heat_pump<br>
+                  - value type = 5: recuperator<br>
+                  - value type = 6: fireplace<br>
+                  - value type = 7: installation<br>
+                  - value type = 8: gas_boiler<br>
+                  - value type = 9: climaconvector<br>
+                  - value type = 10: recuperator verano<br>
+                  - value type = 11: zones_system_controller<br>
+    
+     </details>
+  contact:
+    email: Mateusz.Mydlarz@techsterowniki.pl
+  version: 1.0.0
+
+servers:
+  - url: https://emodul.eu/api/v1
+
+paths:
+  /authentication:
+    $ref: "./tags/authentication/authentication.yaml"
+
+  /account:
+    $ref: "./tags/account/account.yaml"
+
+  /account/{confirmation_code}:
+    $ref: "./tags/account/account_confirmation_code.yaml"
+
+  /account/activation/{uuid}:
+    $ref: "./tags/account/account_activation_uuid.yaml"
+
+  /account/password/reset:
+    $ref: "./tags/account/account_password_reset.yaml"
+
+  /account/password:
+    $ref: "./tags/account/account_password.yaml"
+
+  /account/policy:
+    $ref: "./tags/account/account_policy.yaml"
+
+  /account/email/{email}/i18n/{i18n}:
+    $ref: "./tags/account/account_email_i18n.yaml"
+
+  /public/docs/{language}/{file_name}:
+    $ref: "./tags/public/public_docs_language_file_name.yaml"
+
+  /public/policy/{policy_type}/language/{language}:
+    $ref: "./tags/public/public_policy.yaml"
+
+  /public/regulations/{regulation_type}/language/{language}:
+    $ref: "./tags/public/public_regulations.yaml"
+
+  /users/{user_id}/last_modification:
+    $ref: "./tags/users/users_user_id_last_modification.yaml"
+
+  /users/{user_id}/password:
+    $ref: "./tags/users/users_user_id_password.yaml"
+
+  /users/{user_id}/service24_policy:
+    $ref: "./tags/users/users_user_id_service24_policy.yaml"
+
+  /users/{user_id}/info:
+    $ref: "./tags/users/users_user_id_info.yaml"
+
+  /users/{user_id}/contact_info:
+    $ref: "./tags/users/users_user_id_contact_info.yaml"
+
+  /users/{user_id}/contact:
+    $ref: "./tags/users/users_user_id_contact.yaml"
+
+  /users/{user_id}/email/i18n/{i18n}:
+    $ref: "./tags/users/users_user_id_email_i18n.yaml"
+
+  /users/{user_id}/email/confirmation/{confirmation_code}:
+    $ref: "./tags/users/users_user_id_email_confirmation_confirmation_code.yaml"
+
+  /users/{user_id}/modules:
+    $ref: "./tags/modules/users_user_id_modules.yaml"
+
+  /users/{user_id}/modules/{module_udid}:
+    $ref: "./tags/modules/users_user_id_modules_module_udid.yaml"
+
+  /users/{user_id}/modules/{module_udid}/zones:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_zones.yaml"
+
+  /users/{user_id}/modules/{module_udid}/zones/{zone_id}/local_schedule:
+    $ref: "./tags/schedule/users_user_id_modules_module_udid_zones_zone_id_local_schedule.yaml"
+
+  /users/{user_id}/modules/{module_udid}/zones/{zone_id}/global_schedule:
+    $ref: "./tags/schedule/users_user_id_modules_module_udid_zones_zone_id_global_schedule.yaml"
+
+  /users/{user_id}/modules/{module_udid}/menu/{menu_type}/{pin}:
+    $ref: "./tags/menu/users_user_id_modules_module_udid_menu_menu_type_pin.yaml"
+
+  /users/{user_id}/modules/{module_udid}/menu/{menu_type}/ido/{ido}:
+    $ref: "./tags/menu/users_user_id_modules_module_udid_menu_menu_type_ido.yaml"
+
+  /i18n/{language}/{tag}:
+    $ref: "./tags/language/i18n_language_tag.yaml"
+
+  /users/{user_id}/module/registration:
+    $ref: "./tags/modules/users_user_id_module_registration.yaml"
+
+  /users/{user_id}/modules/{module_udid}/force_data_sync:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_force_data_sync.yaml"
+
+  /modules/{module_uuid}/statistics/available:
+    $ref: "./tags/statistics/modules_module_uuid_statistics_available.yaml"
+
+  /modules/{module_uuid}/statistics/{type}/range/{range}:
+    $ref: "./tags/statistics/modules_module_uuid_statistics_type_range.yaml"
+
+  /modules/{module_uuid}/statistics/{type}/range/{range}/{month}:
+    $ref: "./tags/statistics/modules_module_uuid_statistics_type_range_range_month.yaml"
+
+  /modules/{module_uuid}/statistics/{type}/range/{range}/month/{month}/year/{year}:
+    $ref: "./tags/statistics/modules_module_uuid_statistics_type_range_range_month_month_year_year.yaml"
+
+  /users/{user_id}/modules/{module_udid}/info/data:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_info_data.yaml"
+
+  /users/{user_id}/modules/{module_udid}/info/location:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_info_location.yaml"
+
+  /users/{user_id}/modules/{module_udid}/info/time_zone:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_info_time_zone.yaml"
+
+  /users/{user_id}/modules/{module_udid}/zones/{zones_id}:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_zones_zones_id.yaml"
+
+  /users/{user_id}/modules/{module_udid}/alarm_history/from/{from}/to/{to}/type/{type}:
+    $ref: "./tags/alarm/users_user_id_modules_module_udid_alarm_history_from_from_to_to_type_type.yaml"
+
+  /users/{user_id}/push/notifications/assigned_accounts/{token}:
+    $ref: "./tags/notifications/users_user_id_notifications_assigned_accounts_token.yaml"
+
+  /users/{user_id}/modules/{module_udid}/alarm_history:
+    $ref: "./tags/alarm/users_user_id_modules_module_udid_alarm_history.yaml"
+
+  /users/{user_id}/modules/{module_udid}/tiles/order:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_tiles_order.yaml"
+
+  /users/{user_id}/modules/{module_udid}/tiles:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_tiles.yaml"
+
+  /users/{user_id}/modules/{module_udid}/default:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_default.yaml"
+
+  /users/{user_id}/modules/{module_udid}/group:
+    $ref: "./tags/modules/users_user_id_modules_module_udid_group.yaml"
+
+  /users/{user_id}/notifications/push/devices:
+    $ref: "./tags/notifications/users_user_id_notifications_push_devices.yaml"
+
+  /users/{user_id}/modules/{module_udid}/notifications/email:
+    $ref: "./tags/notifications/users_user_id_modules_module_udid_notifications_email.yaml"
+
+  /users/{user_id}/modules/{module_udid}/notifications/time:
+    $ref: "./tags/notifications/users_user_id_modules_module_udid_notifications_time.yaml"
+
+  /users/{user_id}/notifications/push/assigned_accounts/{token}/{hash_id}:
+    $ref: "./tags/notifications/users_user_id_notifications_push_assigned_accounts_token_hash_id.yaml"
+
+  /users/{user_id}/notifications/push/devices/{device_id}:
+    $ref: "./tags/notifications/users_user_id_notifications_push_devices_device_id.yaml"
+
+  /users/{user_id}/notifications/push/device:
+    $ref: "./tags/notifications/users_user_id_notifications_push_device.yaml"
+
+  /users/{user_id}/modules/{module_uuid}/notifications/email:
+    $ref: "./tags/notifications/users_user_id_modules_module_uuid_notifications_email.yaml"
+
+  /time_zones:
+    $ref: "./tags/public/time_zones.yaml"
+
+  /countries_list:
+    $ref: "./tags/public/countries_list.yaml"
+
+  #  /users/{user_id}/modules/{module_udid}/statistics_download_data:
+  #    post:
+  #      tags:
+  #        - Statistics
+  #      summary: Download statistics data
+  #      description: |
+  #      requestBody:
+  #        required: true
+  #        content:
+  #          application/json:
+  #            schema:
+  #              type: object
+  #              properties:
+  #                timeRange:
+  #                  type: string
+  #                selectedMonth:
+  #                  type: integer
+  #                selectedYear:
+  #                  type: integer
+  #                group_code:
+  #                  type: string
+  #      parameters:
+  #        - name: user_id
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #        - name: module_udid
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #      responses:
+  #        '200':
+  #          description: successful operation
+  #        '403':
+  #          description: Invalid user_id
+  #        '400':
+  #          description: Bad Request
+
+  #  /users/{user_id}/modules/{module_udid}/update/popup/last_update/{last_update}:
+  #    get:
+  #      tags:
+  #        - Update
+  #      summary: Get last update of popup
+  #      description: |
+  #        Retrieves the last update of a popup.
+  #      parameters:
+  #        - name: user_id
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #          example: 123456
+  #        - name: module_udid
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: string
+  #          example: "8cae205f9ec1dc9fe8ce63d98dcb80wq"
+  #        - name: last_update
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: string
+  #            example: "2024-03-21T11:44:00.037251+01:00"
+  #      operationId: getLastUpdatePopup
+  #      responses:
+  #        '200':
+  #          description: Successful operation
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/LastUpdatePopupSuccessResponse'
+  #        '422':
+  #          description: Something went wrong
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/LastUpdatePopupErrorResponse'
+
+  #  /users/{user_id}/modules/{module_udid}/update/data/last_update/{last_update}:
+  #    get:
+  #      tags:
+  #        - Update
+  #      summary: Get last update of data
+  #      description: |
+  #        Retrieves the last update of a data for a specific user module.
+  #        Response contains Tiles, Menu, Zones,
+  #      parameters:
+  #        - name: user_id
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #          example: 123456
+  #        - name: module_udid
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: string
+  #          example: "8cae205f9ec1dc9fe8ce63d98dcb80wq"
+  #        - name: last_update
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: string
+  #            example: "2024-03-21T11:44:00.037251+01:00"
+
+  #  /users/{user_id}/modules/{module_udid}/manufacturer/parent/{parent}:
+  #    get:
+  #      tags:
+  #        - Modules
+  #      summary: Get manufacturer parent details
+  #      description: Retrieves details of the manufacturer parent for the specified user module.
+  #      parameters:
+  #        - name: user_id
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #          example: 123456
+  #        - name: module_udid
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #          example: 789012
+  #        - name: parent
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #          example: 123
+  #      operationId: getManufacturerParentDetails
+  #      responses:
+  #        '200':
+  #          description: Success
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ManufacturerParentDetailsSuccessResponse'
+  #        '404':
+  #          description: Not Found
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ManufacturerParentDetailsNotFoundResponse'
+  #
+  #  /users/{user_id}/modules/{module_udid}/control_data:
+  #    post:
+  #      tags:
+  #        - Modules
+  #      summary: Send control data to module
+  #      description: |
+  #      requestBody:
+  #        required: true
+  #        content:
+  #          application/json:
+  #            schema:
+  #              type: object
+  #              properties:
+  #                element_id:
+  #                  type: integer
+  #                data:
+  #                  type: string
+  #      parameters:
+  #        - name: user_id
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #        - name: module_udid
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #      responses:
+  #        '200':
+  #          description: successful operation
+  #        '403':
+  #          description: Invalid user_id
+  #        '400':
+  #          description: Bad Request
+
+  #  /users/{user_id}/device_token:
+  #    post:
+  #      tags:
+  #        - Account
+  #      summary: Generate device token
+  #      description: |
+  #      requestBody:
+  #        required: true
+  #        content:
+  #          application/json:
+  #            schema:
+  #              type: object
+  #              properties:
+  #                account_id:
+  #                  type: integer
+  #                device_token:
+  #                  type: string
+  #                device_name:
+  #                  type: string
+  #                distribution:
+  #                  type: string
+  #                platform:
+  #                  type: string
+  #      parameters:
+  #        - name: user_id
+  #          in: path
+  #          required: true
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #      responses:
+  #        '200':
+  #          description: successful operation
+  #        '403':
+  #          description: Invalid user_id
+  #        '400':
+  #          description: Bad Request
+  #  /users/{user_id}/get_zone_controllers:
+  #    get:
+  #      tags:
+  #        - Users
+  #      summary: Get zone controllers info
+  #      parameters:
+  #        - name: user_id
+  #          in: path
+  #          required: true
+  #          description: ID of the user to retrieve zone controllers for
+  #          schema:
+  #            type: integer
+  #            format: int64
+  #      responses:
+  #        '200':
+  #          description: Successful operation
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: array
+  #                items:
+  #                  $ref: '#/components/schemas/ZoneController'
+  #              example:
+  #                - name: "L-12"
+  #                  email: ""
+  #                  type: "zones_controller"
+  #                  controllerStatus: "active"
+  #                  moduleStatus: "active"
+  #                  additionalInformation: ""
+  #                  phoneNumber: null
+  #                  zipCode: ""
+  #                  country: null
+  #                  gmtId: 30
+  #                  gmtTime: "1"
+  #                  postcodePolicyAccepted: false
+  #                  version: ""
+  #                  company: ""
+  #                  udid: "224581451b54994ecd77bcb7eea00817"
+  #                - name: "L-12 Przez RS"
+  #                  email: ""
+  #                  type: "zones_controller"
+  #                  controllerStatus: "active"
+  #                  moduleStatus: "active"
+  #                  additionalInformation: ""
+  #                  phoneNumber: null
+  #                  zipCode: ""
+  #                  country: null
+  #                  gmtId: 30
+  #                  gmtTime: "1"
+  #                  postcodePolicyAccepted: false
+  #                  version: ""
+  #                  company: ""
+  #                  udid: "eecffe7367165747d97f8bc6b7fb6121"
+  #        '400':
+  #          description: Invalid user_id or token
+  #    components:
+  #      schemas:
+  #        ZoneController:
+  #          type: object
+  #          properties:
+  #            name:
+  #              type: string
+  #            email:
+  #              type: string
+  #            type:
+  #              type: string
+  #            controllerStatus:
+  #              type: string
+  #            moduleStatus:
+  #              type: string
+  #            additionalInformation:
+  #              type: string
+  #            phoneNumber:
+  #              type: string
+  #            zipCode:
+  #              type: string
+  #            country:
+  #              type: string
+  #            gmtId:
+  #              type: integer
+  #            gmtTime:
+  #              type: string
+  #            postcodePolicyAccepted:
+  #              type: boolean
+  #            version:
+  #              type: string
+  #            company:
+

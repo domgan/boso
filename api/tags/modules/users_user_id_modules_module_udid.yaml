@@ -1,0 +1,2088 @@
+get:
+  tags:
+    - Modules
+  summary: Module data
+  description: |
+    Endpoint for fetching module data. 
+    
+    ```json
+      {
+      "zones": { // pertains to `zones_controller` and `zones_system_controller`
+        "transaction_time": null,
+        "elements": [],
+        "globalSchedules": {
+          "time": null,
+          "duringChange": null,
+          "elements": []
+        },
+        "controllerParameters": { 
+          "controllerMode": {},
+          "globalSchedulesNumber": {}
+        },
+        "system": { // pertains to `zones_system_controller`
+            "iterator": {
+                "9000": "9000,0,100" // Iterator: Iterator object for the system controller. The object is a string with the following format: "Container_ID,Parent_ID,Type"
+            },
+            "containers": [
+                {
+                    "containerId": 9002, // containerId
+                    "parentId": 9000, // parentId is the Container_ID of the parent object
+                    "textId": 0, //  Text_ID: Text ID from the database
+                    "iconId": 0, // Icon_ID: Icon ID from the database
+                    "wikiId": 0, // Wiki_ID: Wiki text ID from the database
+                    "version": "1.0.16", // Version: Controller software version in the format x.x.x
+                    "containerName": "Moduł główny", // ame encoded in HEX. Character limit 15.
+                    "processorId": "9C0613EB", //Processor_ID: Generated device processor address as in WTP3
+                    "visibility": 1 // Visibility flag. Due to the inability to remove objects from the database, a visibility flag was introduced to hide/remove all elements associated with the container object.
+                }
+            ],
+            "containersData": [
+                {
+                    "parameterId": 9003, // parameterId
+                    "parentId": 9002, // parentId is the containerId of the parent object
+                    "type": 0, // Device type: Device type in the system (Allows clear specification of “connection”)
+                                  0 - Master [M]
+                                  1 - Slave 1 [S1]
+                                  2 - Slave 2 [S2]
+                                  3 - Slave 3 [S3]
+                                  4 - Slave 4 [S4]
+                                  5 - Slave 5 [S5]
+                    "signal": 100, // Signal: - signal strength. For Master, the signal refers to the Master<>ControlPanel link. For SlaveX, it refers to the Master<>SlaveX link.
+                                      -3 Communication loss alarm
+                                      -2 Wired communication
+                                      -1 Default, waiting
+                                      0-100 percentage value of signal strength
+                    "pumpsState": true, // Pumps state: Current pump relay state (boolean type value; true=Active)
+                    "pumpsConnection": { // Pumps connection: A set of flags whose shift represents the enum value of the device sharing the algorithm. (detailed description below).
+                        "0": true,
+                        "1": true,
+                        "2": false
+                    },
+                    "freeContactState": true, // FreeContact state: Current two-state relay state (boolean type value; true = Heating/Cooling needed based on H/C State)
+                    "freeContactConnection": { // FreeContact connection: A set of flags whose shift represents the enum value of the device sharing the algorithm. (detailed description below)
+                        "0": true,
+                        "1": true,
+                        "2": true
+                    },
+                    "hcState": true, //  H/C state: Current two-state heating/cooling input state (boolean type value true=heating / false=cooling )
+                    "hcConnection": { // H/C connection: A set of flags whose shift represents the enum value of the device sharing the algorithm. (detailed description below)
+                        "0": false,
+                        "1": true,
+                        "2": true
+                    }
+                },
+            ],
+            "containerParameters": [],
+            "additionalContacts": [],
+            "duringChange": [],
+            "options": {}
+         } 
+      },
+      "tiles": {} // pertains to every controller type
+      }
+    ```  
+   
+
+    Where:
+    - 'zones' - zones data for zones_controller and zones_system_controller.
+    - `transaction_time` - transaction time for zones when available.
+    - `elements` - list of zone elements.
+    - `globalSchedules` - global schedules.
+    - `controllerParameters` - controller parameters for zones.
+    - `system` - system data for drivers zones_system_controller
+    - `tiles` - list of tiles for every controller type.
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - name: module_udid
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json [Type 1]:
+          schema:
+            $ref: '#/components/schemas/ModuleData1'
+        application/json [Type 2]:
+          schema:
+              $ref: '#/components/schemas/ModuleData2'
+        application/json [Type 3]:
+          schema:
+              $ref: '#/components/schemas/ModuleData3'
+        application/json [Type 6]:
+          schema:
+              $ref: '#/components/schemas/ModuleData6'
+        application/json [Type 11]:
+          schema:
+              $ref: '#/components/schemas/ModuleData11'
+        application/json [Type 21]:
+          schema:
+              $ref: '#/components/schemas/ModuleData21'
+        application/json [Type 22]:
+          schema:
+              $ref: '#/components/schemas/ModuleData22'
+        application/json [Type 23]:
+          schema:
+              $ref: '#/components/schemas/ModuleData23'
+        application/json [Type 31]:
+          schema:
+              $ref: '#/components/schemas/ModuleData31'
+        application/json [Type 32]:
+          schema:
+              $ref: '#/components/schemas/ModuleData32'
+        application/json [Type 40]:
+          schema:
+              $ref: '#/components/schemas/ModuleData40'
+        application/json [Type 41]:
+          schema:
+              $ref: '#/components/schemas/ModuleData41'
+        application/json [Type 50]:
+          schema:
+              $ref: '#/components/schemas/ModuleData50'
+        application/json [Type 51]:
+          schema:
+              $ref: '#/components/schemas/ModuleData51'
+        application/json [Type 60]:
+          schema:
+              $ref: '#/components/schemas/ModuleData60'
+        application/json [Type 61]:
+          schema:
+              $ref: '#/components/schemas/ModuleData61'
+        application/json [Type 100]:
+          schema:
+              $ref: '#/components/schemas/ModuleData100'
+        application/json [Type 250]:
+          schema:
+              $ref: '#/components/schemas/ModuleData250'
+        application/json [Type 251]:
+          schema:
+              $ref: '#/components/schemas/ModuleData251'
+        application/json [Type 252] OpenTherm:
+          schema:
+              $ref: '#/components/schemas/ModuleData252'
+    '400':
+      description: Invalid ID supplied
+    '404':
+      description: Module not found
+
+delete:
+  tags:
+    - Modules
+  summary: Delete module
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - name: module_udid
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  operationId: Delete module
+
+  responses:
+    '200':
+      description: successful operation
+
+components:
+  schemas:
+    Zones:
+      type: object
+      properties:
+        transaction_time:
+          type: string
+          format: date-time
+          example: "2024-07-11T09:21:49.040612+02:00"
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoneElement'
+        globalSchedules:
+          $ref: '#/components/schemas/GlobalSchedules'
+        controllerParameters:
+          $ref: '#/components/schemas/ControllerParameters'
+        system:
+          $ref: '#/components/schemas/System'
+
+    Tile1:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type1'
+    Tile2:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type2'
+    Tile3:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type3'
+    Tile6:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type6'
+    Tile11:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type11'
+    Tile21:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type21'
+    Tile22:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type22'
+    Tile23:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type23'
+    Tile31:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type31'
+    Tile32:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type32'
+    Tile40:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type40'
+    Tile41:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type41'
+    Tile50:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type50'
+    Tile51:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type51'
+    Tile60:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type60'
+    Tile61:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type61'
+    Tile100:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type61'
+
+    Tile250:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type250'
+    Tile251:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type251'
+    Tile252:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        type:
+          type: integer
+        menuId:
+          type: integer
+        orderId:
+          type: integer
+        visibility:
+          type: boolean
+        params:
+          type: object
+          $ref: '#/components/schemas/Param.Type252'
+
+    ModuleData1:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tile1'
+    Param.Type1:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Temperature sensor"
+        workingStatus:
+          type: integer
+          example: 1
+        value:
+          type: integer
+        batteryLevel:
+          type: integer
+          example: values between 0..100
+        signalStrength:
+          type: integer
+          example: values between 0..100
+    ModuleData2:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile2'
+    Param.Type2:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Fire sensor"
+          example: Fire sensor
+        workingStatus:
+          type: integer
+          example: 1
+        value:
+          type: integer
+    ModuleData3:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile3'
+    Param.Type3:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Firing up / Damping"
+        firingUp:
+          type: boolean
+          example: 1
+    ModuleData6:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile6'
+    Param.Type6:
+      type: object
+      properties:
+        transaction_time:
+          type: string
+          example: null
+        elements:
+          type: array
+          items:
+            type: object
+        globalSchedules:
+          type: object
+          properties:
+            time:
+              type: string
+            duringChange:
+              type: string
+            elements:
+              type: array
+              items:
+                type: object
+            params:
+              type: object
+              properties:
+                description:
+                  type: string
+                statusId:
+                  type: integer
+                headerId:
+                  type: integer
+                iconId:
+                  type: integer
+                options:
+                  type: object
+                  additionalProperties: {}
+    ModuleData11:
+      type: object
+      properties:
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile11'
+    Param.Type11:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Relay"
+        workingStatus:
+          type: boolean
+          example: 1
+        txtId:
+          type: integer
+          example: 11
+        iconId:
+          type: integer
+          example: 4
+    ModuleData21:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile21'
+    Param.Type21:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Additional pump"
+        workingStatus:
+          type: boolean
+          example: 1
+        txtId:
+          type: integer
+          example: 11
+        pumpNumber:
+          type: integer
+          example: 4
+    ModuleData22:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile22'
+    Param.Type22:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Fan"
+        workingStatus:
+          type: boolean
+          example: 1
+        txtId:
+          type: integer
+          example: 11
+        fanNumber:
+          type: integer
+          example: 4
+        gear:
+          type: integer
+          example: 1
+    ModuleData23:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+      tiles:
+        type: array
+        items:
+          $ref: '#/components/schemas/Tile23'
+    Param.Type23:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Built-in valve"
+        workingStatus:
+          type: boolean
+          example: 1
+        txtId:
+          type: integer
+          example: 11
+        valveNumber:
+          type: integer
+          example: 4
+        currentTemp:
+          type: integer
+          example: 60
+        returnTemp:
+          type: integer
+          example: 55
+        setTempCorrection:
+          type: integer
+          example: 5
+        openingPercentage:
+          type: integer
+          example: 30
+        valvePump:
+          type: integer
+          example: 2
+        boilerProtection:
+          type: boolean
+          example: 1
+        returnProtection:
+          type: integer
+          example: 1
+        setTemp:
+          type: integer
+          example: 50
+    ModuleData31:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+      tiles:
+        type: array
+        items:
+          $ref: '#/components/schemas/Tile31'
+    Param.Type31:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Fuel supply"
+        percentage:
+          type: integer
+          example: 10
+        hours:
+          type: integer
+          example: 8
+    ModuleData32:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+      tiles:
+        type: array
+        items:
+          $ref: '#/components/schemas/Tile32'
+    Param.Type32:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Disinfection"
+        txtId:
+          type: integer
+          example: 12
+        percentage:
+          type: integer
+          example: 40
+    ModuleData40:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile40'
+    Param.Type40:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Text information"
+        txtId:
+          type: integer
+          example: 12
+        iconId:
+          type: integer
+          example: 4
+        statusId:
+          type: integer
+          example: 1
+        headerId:
+          type: integer
+          example: 5
+        options:
+          type: integer
+          example: '[3..-1]'
+    ModuleData41:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile41'
+    Param.Type41:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Date"
+        year:
+          type: integer
+          example: 2020
+        month:
+          type: integer
+          example: 12
+        day:
+          type: integer
+          example: 28
+        dayId:
+          type: integer
+          example: 5
+        hours:
+          type: integer
+          example: '[0..24]'
+        minutes:
+          type: integer
+          example: 32
+    ModuleData50:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile50'
+    Param.Type50:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Controller software version"
+        txtId:
+          type: integer
+          example: 12
+        iconId:
+          type: integer
+          example: 4
+        version:
+          type: string
+          example: 1.0.2
+        companyId:
+          type: integer
+          example: 5
+        controllerName:
+          type: string
+          example: 'L-12'
+        mainControllerId:
+          type: integer
+          example: 6
+    ModuleData51:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile51'
+    Param.Type51:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Peripheral system software version"
+        txtId:
+          type: integer
+          example: 12
+        iconId:
+          type: integer
+          example: 4
+        version:
+          type: string
+          example: 1.0.2
+    ModuleData60:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile60'
+    Param.Type60:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Container"
+        txtId:
+          type: integer
+          example: 12
+        iconId:
+          type: integer
+          example: 4
+    ModuleData61:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile61'
+    Param.Type61:
+      type: object
+      properties:
+        containerId:
+          type: integer
+          example: 12
+    ModuleData100:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile100'
+    Param.Type100:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "DHW for zones controller"
+        isActive:
+          type: boolean
+          example: 1
+        zoneNumber:
+          type: integer
+          example: 4
+        mode:
+          type: string
+          example: 'off / parallel'
+        currentTempDHW:
+          type: integer
+          example: 45
+        currentTempCH:
+          type: integer
+          example: '34 or null'
+        setTempDHW:
+          type: integer
+          example: 40
+    ModuleData250:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile250'
+    Param.Type250:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "DHW ON/OFF"
+        txtId:
+          type: integer
+          example: 12
+        iconId:
+          type: integer
+          example: 4
+        isActive:
+          type: boolean
+          example: 1
+        mode:
+          type: string
+          example: 'off schedule timeLimit'
+        durationTime:
+          type: integer
+          example: 20
+    ModuleData251:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile251'
+    Param.Type251:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "DHW for zones controller"
+        zoneNumber:
+          type: integer
+          example: 2
+        currentTempDHW:
+          type: integer
+          example: 22
+        isActive:
+          type: boolean
+          example: 1
+        mode:
+          type: string
+          example: 'off parallel'
+        currentTempCH:
+          type: integer
+          example: 20
+        setTempDHW:
+          type: integer
+          example: 20
+        dhwSensorEvents:
+          type: integer
+          example: 20
+        heatingSensorEvents:
+          type: integer
+          example: 20
+    ModuleData252:
+      type: object
+      properties:
+        zones:
+          type: object
+          $ref: '#/components/schemas/Zones'
+        tiles:
+          type: array
+          items:
+          $ref: '#/components/schemas/Tile252'
+    Param.Type252:
+      type: object
+      properties:
+        description:
+          type: string
+          description: "OpenTherm"
+        currentTemp:
+          type: integer
+          example: 23
+        setCurrentTemp:
+          type: integer
+          example: 22
+        currentTempDHW:
+          type: integer
+          example: 20
+        setTempDHW:
+          type: integer
+          example: 20
+        modulationPercentage:
+          type: integer
+          example: 20
+        flags:
+          type: string
+          example: " 00000001 - No connection | 00000010 - Heating curve | 00000100 - Active | CO00001000 - Active CWU"
+
+
+    ZoneElement:
+      type: object
+      properties:
+        zone:
+          $ref: '#/components/schemas/Zone'
+        description:
+          $ref: '#/components/schemas/Description'
+        mode:
+          $ref: '#/components/schemas/Mode'
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+        actuators:
+          type: array
+          items:
+            $ref: '#/components/schemas/Actuator'
+        underfloor:
+          $ref: '#/components/schemas/Underfloor'
+        windowsSensors:
+          type: array
+          items:
+            $ref: '#/components/schemas/WindowsSensors'
+        additionalContacts:
+          type: array
+          items:
+            type: object
+        zoneState:
+          type: string
+          enum:
+            - sensorDamaged
+            - noCommunication
+            - zoneUnregistered
+            - zoneOff
+            - noAlarm
+      example:
+        zone:
+          id: 9154
+          parentId: 9146
+          time: "2024-07-11T09:14:41"
+          duringChange: false
+          index: 8
+          currentTemperature: null
+          setTemperature: 240
+          flags:
+            relayState: "off"
+            minOneWindowOpen: false
+            algorithm: "heating"
+            floorSensor: 0
+            humidityAlgorytm: 0
+            zoneExcluded: 0
+          zoneState: "noCommunication"
+          signalStrength: null
+          batteryLevel: null
+          actuatorsOpen: 0
+          humidity: 0
+          visibility: true
+        description:
+          id: 9155
+          parentId: 9154
+          name: "Strefa 9"
+          styleId: 0
+          styleIcon: "living_room"
+          duringChange: false
+        mode:
+          id: 9156
+          parentId: 9154
+          mode: "constantTemp"
+          constTempTime: 60
+          setTemperature: 240
+          scheduleIndex: 0
+        schedule:
+          id: 9158
+          parentId: 9154
+          index: -9
+          p0Days: [ "1", "1", "1", "1", "1", "0", "0" ]
+          p0Intervals:
+            - start: 300
+              stop: 600
+              temp: 240
+            - start: 660
+              stop: 1380
+              temp: 240
+            - start: 6100
+              stop: 6100
+              temp: 200
+          p0SetbackTemp: 260
+          p1Days: [ "0", "0", "0", "0", "0", "1", "1" ]
+          p1Intervals:
+            - start: 6100
+              stop: 6100
+              temp: 200
+            - start: 6100
+              stop: 6100
+              temp: 200
+            - start: 6100
+              stop: 6100
+              temp: 200
+          p1SetbackTemp: 150
+        actuators:
+          - id: 123
+            parentId: 456
+            index: 1
+            state: on
+            signalStrength: 80
+            batteryLevel: 50
+            errorCode: 0
+        underfloor:
+          id: 123
+          parentId: 456
+          mode: floorProtection
+          currentState: waiting
+          floorPump: on
+          sensorType: wired
+          temperature: 25.5
+          signalStrength: 80
+          batteryLevel: 50
+          events:
+            correctWork: true
+            noCommunication: false
+            sensorDamaged: false
+            lowBattery: true
+            lowSignal: false
+            tempTooHigh: false
+            tempTooLow: false
+            serviceError: false
+        windowsSensors:
+          - id: 789
+            parentId: 456
+            index: 1
+            state: waiting
+            signalStrength: 80
+            batteryLevel: 50
+            windowState: closed
+        additionalContacts: [ ]
+    Underfloor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        parentId:
+          type: integer
+          format: int64
+        mode:
+          type: string
+          enum:
+            - off
+            - floorProtection
+            - sustain
+        currentState:
+          type: string
+          enum:
+            - waiting
+            - alarm
+            - off
+            - floorTooCold
+            - floorTooHot
+            - parametersReached
+            - antifreezeProtection
+        floorPump:
+          type: string
+          enum:
+            - off
+            - on
+        sensorType:
+          type: string
+          enum:
+            - wired
+            - NTC
+            - noSensor
+            - null
+            - wireless
+        temperature:
+          type: number
+          nullable: true
+        signalStrength:
+          type: number
+          nullable: true
+        batteryLevel:
+          type: number
+          nullable: true
+        events:
+          type: object
+          properties:
+            correctWork:
+              type: boolean
+            noCommunication:
+              type: boolean
+            sensorDamaged:
+              type: boolean
+            lowBattery:
+              type: boolean
+            lowSignal:
+              type: boolean
+            tempTooHigh:
+              type: boolean
+            tempTooLow:
+              type: boolean
+            serviceError:
+              type: boolean
+      required:
+        - id
+        - parentId
+        - mode
+        - currentState
+        - floorPump
+        - sensorType
+        - events
+
+    WindowsSensors:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        index:
+          type: integer
+        state:
+          type: string
+          enum:
+            - waiting
+            - lowBattery
+            - noCommunication
+            - unregistered
+            - noAlarm
+        signalStrength:
+          type: number
+          nullable: true
+        batteryLevel:
+          type: number
+          nullable: true
+        windowState:
+          type: string
+          enum:
+            - closed
+            - open
+      required:
+        - id
+        - parentId
+        - index
+        - state
+        - windowState
+    Zone:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 9154
+        parentId:
+          type: integer
+          example: 9146
+        time:
+          type: string
+          format: date-time
+          example: "2024-07-11T09:14:41"
+        duringChange:
+          type: boolean
+          example: false
+        index:
+          type: integer
+          example: 8
+        currentTemperature:
+          type: integer
+          nullable: true
+          example: null
+        setTemperature:
+          type: integer
+          example: 240
+        flags:
+          $ref: '#/components/schemas/Flags'
+        zoneState:
+          type: string
+          enum:
+            - sensorDamaged
+            - noCommunication
+            - zoneUnregistered
+            - zoneOff
+            - noAlarm
+          example: "noCommunication"
+        signalStrength:
+          type: integer
+          nullable: true
+          example: null
+        batteryLevel:
+          type: integer
+          nullable: true
+          example: null
+        actuatorsOpen:
+          type: integer
+          example: 0
+        humidity:
+          type: integer
+          example: 0
+        visibility:
+          type: boolean
+          example: true
+
+    Flags:
+      type: object
+      properties:
+        relayState:
+          type: string
+          enum:
+            - off
+            - on
+          example: "off"
+        minOneWindowOpen:
+          type: boolean
+          example: false
+        algorithm:
+          type: string
+          enum:
+            - heating
+            - cooling
+          example: "heating"
+        floorSensor:
+          type: integer
+          example: 0
+        humidityAlgorytm:
+          type: integer
+          example: 0
+        zoneExcluded:
+          type: integer
+          example: 0
+
+    Description:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 9155
+        parentId:
+          type: integer
+          example: 9154
+        name:
+          type: string
+          example: "Strefa 9"
+        styleId:
+          type: integer
+          example: 0
+        styleIcon:
+          type: string
+          enum:
+            - "living_room"
+            - "kitchen"
+            - "bathroom"
+            - "bedroom"
+            - "hall"
+            - "office"
+            - "garage"
+            - "attic"
+            - "basement"
+            - "workshop"
+            - "garden"
+            - "pool"
+            - "sauna"
+            - "greenhouse"
+            - "other"
+          example: "living_room"
+        duringChange:
+          type: boolean
+          example: false
+
+    Mode:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 9156
+        parentId:
+          type: integer
+          example: 9154
+        mode:
+          type: string
+          enum:
+            - localSchedule
+            - globalSchedule
+            - constantTemp
+            - timeLimit
+          example: "constantTemp"
+        constTempTime:
+          type: integer
+          example: 60
+        setTemperature:
+          type: integer
+          example: 240
+        scheduleIndex:
+          type: integer
+          example: 0
+
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 9158
+        parentId:
+          type: integer
+          example: 9154
+        index:
+          type: integer
+          example: -9
+        p0Days:
+          type: array
+          items:
+            type: string
+          example: [ "1", "1", "1", "1", "1", "0", "0" ]
+        p0Intervals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Interval'
+        p0SetbackTemp:
+          type: integer
+          example: 260
+        p1Days:
+          type: array
+          items:
+            type: string
+          example: [ "0", "0", "0", "0", "0", "1", "1" ]
+        p1Intervals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Interval'
+        p1SetbackTemp:
+          type: integer
+          example: 150
+      example:
+        id: 9158
+        parentId: 9154
+        index: -9
+        p0Days: [ "1", "1", "1", "1", "1", "0", "0" ]
+        p0Intervals:
+          - start: 300
+            stop: 600
+            temp: 240
+          - start: 660
+            stop: 1380
+            temp: 240
+          - start: 6100
+            stop: 6100
+            temp: 200
+        p0SetbackTemp: 260
+        p1Days: [ "0", "0", "0", "0", "0", "1", "1" ]
+        p1Intervals:
+          - start: 6100
+            stop: 6100
+            temp: 200
+          - start: 6100
+            stop: 6100
+            temp: 200
+          - start: 6100
+            stop: 6100
+            temp: 200
+        p1SetbackTemp: 150
+
+    Interval:
+      type: object
+      properties:
+        start:
+          type: integer
+          example: 300
+        stop:
+          type: integer
+          example: 600
+        temp:
+          type: integer
+          example: 240
+
+    Actuator:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        parentId:
+          type: integer
+          example: 9154
+        index:
+          type: integer
+          example: 1
+        state:
+          type: string
+          enum:
+            - waiting
+            - noAlarm
+            - unregistered
+            - noCommunication
+            - damaged
+            - lowBattery
+          example: "active"
+        signalStrength:
+          type: integer
+          example: 100
+        batteryLevel:
+          type: integer
+          example: 100
+        errorCode:
+          type: integer
+          example: 0
+
+    GlobalSchedules:
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: "2024-07-11T09:20:07"
+        duringChange:
+          type: boolean
+          nullable: true
+          example: null
+        elements:
+          type: array
+          items:
+            $ref: ' #/components/schemas/GlobalScheduleElement'
+            example:
+            time: “2024-07-11T09:20:07”
+            duringChange: null
+            elements:
+              - id: 9147
+            parentId: 9146
+            index: 0
+            name: “Harmonogram 1”
+            p0Days: [ “1”, “1”, “1”, “1”, “1”, “0”, “0” ]
+            p0SetbackTemp: 240
+            p0Intervals:
+              - start: 300
+              - stop: 600
+              - temp: 240
+              - start: 660
+              - stop: 1380
+              - temp: 240
+              - start: 6100
+              - stop: 6100
+              - temp: 200
+            p1Days: [ “0”, “0”, “0”, “0”, “0”, “1”, “1” ]
+            p1SetbackTemp: 240
+            p1Intervals:
+              - start: 6100
+              - stop: 6100
+              - temp: 200
+              - start: 6100
+              - stop: 6100
+              - temp: 200
+              - start: 6100
+              - stop: 6100
+              - temp: 200
+
+
+    GlobalScheduleElement:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 9147
+        parentId:
+          type: integer
+          example: 9146
+        index:
+          type: integer
+          example: 0
+        name:
+          type: string
+          example: "Harmonogram 1"
+        p0Days:
+          type: array
+          items:
+            type: string
+          example: [ "1", "1", "1", "1", "1", "0", "0" ]
+        p0SetbackTemp:
+          type: integer
+          example: 240
+        p0Intervals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Interval'
+        p1Days:
+          type: array
+          items:
+            type: string
+          example: [ "0", "0", "0", "0", "0", "1", "1" ]
+        p1SetbackTemp:
+          type: integer
+          example: 240
+        p1Intervals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Interval'
+
+    ControllerParameters:
+      type: object
+      properties:
+        controllerMode:
+          $ref: '#/components/schemas/ControllerMode'
+        globalSchedulesNumber:
+          type: object
+      example:
+        controllerMode:
+          id: 2
+          parentId: 9146
+          type: 0
+          txtId: 102
+          iconId: 1
+          value: 3
+          menuId: 10
+        globalSchedulesNumber: { }
+
+    ControllerMode:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        parentId:
+          type: integer
+          example: 9146
+        type:
+          type: integer
+          example: 0
+        txtId:
+          type: integer
+          example: 102
+        iconId:
+          type: integer
+          example: 1
+        value:
+          type: integer
+          example: 3
+        menuId:
+          type: integer
+          example: 10
+
+    System:
+      type: object
+      properties:
+        iterator:
+          type: object
+          additionalProperties:
+            type: string
+        containers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Container'
+        containersData:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerData'
+        containerParameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerParameters'
+        additionalContacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalContact'
+        duringChange:
+          type: array
+          items:
+            type: object
+        options:
+          type: object
+    example:
+      iterator:
+        "9000": "9000,0,100"
+      containers:
+        - containerId: 9002
+          parentId: 9000
+          textId: 0
+          iconId: 0
+          wikiId: 0
+          version: "1.0.16"
+          containerName: "Moduł główny"
+          processorId: "9C0613EB"
+          visibility: 1
+        - containerId: 9146
+          parentId: 9000
+          textId: 0
+          iconId: 0
+          wikiId: 0
+          version: "1.0.16"
+          containerName: "Moduł 1"
+          processorId: "2C31FB76"
+          visibility: 1
+        - containerId: 9290
+          parentId: 9000
+          textId: 0
+          iconId: 0
+          wikiId: 0
+          version: "1.0.16"
+          containerName: "Moduł 2"
+          processorId: "79F16684"
+          visibility: 1
+      containersData:
+        - parameterId: 9003
+          parentId: 9002
+          type: 0
+          signal: 100
+          pumpsState: true
+          pumpsConnection:
+            "0": true
+            "1": true
+            "2": false
+          freeContactState: true
+          freeContactConnection:
+            "0": true
+            "1": true
+            "2": true
+          hcState: true
+          hcConnection:
+            "0": false
+            "1": true
+            "2": true
+        - parameterId: 9147
+          parentId: 9146
+          type: 1
+          signal: 100
+          pumpsState: true
+          pumpsConnection:
+            "0": true
+            "1": true
+            "2": false
+          freeContactState: true
+          freeContactConnection:
+            "0": true
+            "1": true
+            "2": true
+          hcState: true
+          hcConnection:
+            "0": false
+            "1": true
+            "2": true
+        - parameterId: 9291
+          parentId: 9290
+          type: 2
+          signal: -3
+          pumpsState: false
+          pumpsConnection:
+            "0": true
+            "1": true
+            "2": false
+          freeContactState: false
+          freeContactConnection:
+            "0": true
+            "1": true
+            "2": true
+          hcState: true
+          hcConnection:
+            "0": false
+            "1": true
+            "2": true
+      containerParameters: [ ]
+      additionalContacts:
+        - id: 9004
+          parentId: 9002
+          index: 1
+          state: "noCommunication"
+          signalStrength: null
+          relayState: "off"
+          textNumber: 730
+          type: "additionalContact"
+          workType: 3
+          menuId: 6815744
+      duringChange: [ ]
+      options: { }
+
+    Container:
+      type: object
+      properties:
+        containerId:
+          type: integer
+          example: 1
+        parentId:
+          type: integer
+          example: 0
+        textId:
+          type: integer
+          example: 101
+        iconId:
+          type: integer
+          example: 1
+        wikiId:
+          type: integer
+          example: 1001
+        version:
+          type: string
+          example: "1.0.0"
+        containerName:
+          type: string
+          example: "Main Container"
+        processorId:
+          type: string
+          example: "Proc-001"
+        visibility:
+          type: integer
+          example: 1
+    ContainerParameters:
+      type: object
+      properties:
+        controllerMode:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 2
+            parentId:
+              type: integer
+              example: 9146
+            type:
+              type: integer
+              example: 0
+            txtId:
+              type: integer
+              example: 102
+            iconId:
+              type: integer
+              example: 1
+            value:
+              type: integer
+              example: 3
+            menuId:
+              type: integer
+              example: 10
+              nullable: true
+        globalSchedulesNumber:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 3
+            parentId:
+              type: integer
+              example: 9142
+            type:
+              type: integer
+              example: 0
+            txtId:
+              type: integer
+              example: 102
+            iconId:
+              type: integer
+              example: 1
+            value:
+              type: integer
+              example: 10
+            menuId:
+              type: integer
+              example: 42
+              nullable: true
+      required:
+        - controllerMode
+        - globalSchedulesNumber
+    ContainerData:
+      type: object
+      properties:
+        parameterId:
+          type: integer
+          example: 1
+        parentId:
+          type: integer
+          example: 0
+        type:
+          type: integer
+          example: 0
+        signal:
+          type: integer
+          example: 100
+        pumpsState:
+          type: boolean
+          example: true
+        pumpsConnection:
+          type: object
+          additionalProperties:
+            type: boolean
+          example: { }
+        freeContactState:
+          type: boolean
+          example: false
+        freeContactConnection:
+          type: object
+          additionalProperties:
+            type: boolean
+          example: { }
+        hcState:
+          type: boolean
+          example: true
+        hcConnection:
+          type: object
+          additionalProperties:
+            type: boolean
+          example: { }
+
+    AdditionalContact:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        parentId:
+          type: integer
+          example: 0
+        index:
+          type: integer
+          example: 0
+        state:
+          type: string
+          example: "active"
+        signalStrength:
+          type: integer
+          nullable: true
+          example: 100
+        relayState:
+          type: string
+          example: "closed"
+        textNumber:
+          type: integer
+          example: 101
+        type:
+          type: string
+          example: "typeA"
+        workType:
+          type: integer
+          example: 0
+        menuId:
+          type: integer
+          example: 10

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Footprint and heat from assets/logo.svg, in the logo's 512 coordinates.
+  The outer group scales it to 0.17 and centres it on 54,54 so it stays
+  inside the 66dp safe zone that launchers never crop.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.17"
+        android:scaleY="0.17"
+        android:translateX="11.24"
+        android:translateY="10.4">
+
+        <group android:translateX="-19" android:translateY="-38">
+            <path
+                android:strokeColor="#80FFFFFF"
+                android:strokeWidth="14"
+                android:strokeLineCap="round"
+                android:pathData="M318,420 q-16,-22 0,-44 t0,-44 t0,-44" />
+            <path
+                android:strokeColor="#80FFFFFF"
+                android:strokeWidth="14"
+                android:strokeLineCap="round"
+                android:pathData="M356,420 q-16,-22 0,-44 t0,-44 t0,-44 t0,-44" />
+            <path
+                android:strokeColor="#80FFFFFF"
+                android:strokeWidth="14"
+                android:strokeLineCap="round"
+                android:pathData="M394,420 q-16,-22 0,-44 t0,-44 t0,-44" />
+        </group>
+
+        <group android:translateX="-75" android:translateY="-34">
+            <path
+                android:fillColor="#FFFFFFFF"
+                android:pathData="M196,214 C196,176 296,168 314,214 C330,254 322,310 312,350 C302,392 310,420 290,440 C270,458 226,454 220,424 C214,396 230,360 228,326 C226,292 196,266 196,214 Z" />
+            <path
+                android:fillColor="#FFFFFFFF"
+                android:pathData="M190,160 a22,27 0 1,0 44,0 a22,27 0 1,0 -44,0 M237,140 a15,15 0 1,0 30,0 a15,15 0 1,0 -30,0 M270,144 a13,13 0 1,0 26,0 a13,13 0 1,0 -26,0 M297,157 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0 M316.5,177 a9.5,9.5 0 1,0 19,0 a9.5,9.5 0 1,0 -19,0" />
+        </group>
+    </group>
+</vector>

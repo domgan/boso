@@ -1,0 +1,55 @@
+put:
+  tags:
+    - Modules
+  summary: Change zone name/icon
+  description: |
+    ```Field                       Type        require     Options
+    zones_id                    Integer       yes
+    description_id              Integer       yes
+    name                        String        yes        max length: 12 characters
+    icons_id                    Integer       yes        0-7 (living_room: 0, bathroom: 1, kitchen: 2, children: 3,                                                       bedroom: 4, wardrobe: 5, corridor: 6, garage: 7)
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - name: module_udid
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - name: zones_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  operationId: Change zone name/icon
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            zones_id:
+              type: integer
+            description_id:
+              type: integer
+            name:
+              type: string
+              description: max length 12 characters
+            icons_id:
+              type: integer
+              # description: 0-7 (living_room: 0, bathroom: 1, kitchen: 2, children: 3,
+              #                                       bedroom: 4, wardrobe: 5, corridor: 6, garage: 7)
+          required:
+            - zones_id
+            - description_id
+            - name
+            - icons_id
+  responses:
+    '200':
+      description: successful operation

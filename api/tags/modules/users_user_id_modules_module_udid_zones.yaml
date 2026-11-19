@@ -1,0 +1,110 @@
+post:
+  tags:
+    - Modules
+  summary: Change zone parameters
+  description: |
+    Change zone parameters (L-7, L-8, WiFi 8S, ST-8S WiFi) \n
+    Set constant temperature:
+    
+    1. **Set constant temperature**:  \
+    POST data example:
+       {
+        "mode": {
+            "id": 210,
+            "parentId": 101,
+            "mode": "constantTemp",
+            "constTempTime": 0,
+            "setTemperature": 220,
+            "scheduleIndex": 0
+        }
+    }
+    
+    2. **Set constant temperature with time limitation**: \
+    POST data example:{
+        "mode": {
+            "id": 210,
+            "parentId": 101,
+            "mode": "timeLimit",
+            "constTempTime": 60,
+            "setTemperature": 220,
+            "scheduleIndex": 0
+        }
+    }
+    3. **Turn on zone**: \
+    POST data example:
+    {
+        "zone": {
+            "id": 101,
+            "zoneState": "zoneOn"
+        }
+    }
+    4. **Turn off zone**: \
+    POST data example:
+    {
+        "zone": {
+            "id": 101,
+            "zoneState": "zoneOff"
+        }
+    }
+  
+
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    - name: module_udid
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  operationId: zoneChange
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/UserContactInfo'
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ZoneMode'
+
+components:
+  schemas:
+    UserContactInfo:
+      type: object
+      properties:
+        city:
+          type: string
+          example: Katowice
+        street:
+          type: string
+          example: Szkolna
+        houseNumber:
+          type: string
+          example: 20
+        installerInformation:
+          type: string
+          example: Information for the installer
+    ZoneMode:
+      type: object
+      properties:
+        id:
+          type: integer
+        parentId:
+          type: integer
+        mode:
+          type: string
+          example: constantTemp
+        constTempTime:
+          type: integer
+        setTemperature:
+          type: integer
+        scheduleIndex:
+          type: integer

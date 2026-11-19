@@ -1,0 +1,81 @@
+get:
+  tags:
+    - Modules
+  summary: List of account modules
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    '200':
+      description: successful operation
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: '#/components/schemas/Module'
+    '400':
+      description: Invalid ID supplied
+    '404':
+      description: Module not found
+
+components:
+  schemas:
+    Module:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 0
+        default:
+          type: boolean
+          example: false
+        name:
+          type: string
+          example: I-3 DEMO
+        email:
+          type: string
+          format: email
+        type:
+          type: string
+          example: installation
+        controllerStatus:
+          type: string
+          example: active
+        moduleStatus:
+          type: string
+          example: active
+        additionalInformation:
+          type: string
+          example: null
+        phoneNumber:
+          type: string
+          example: 123456
+        zipCode:
+          type: string
+          example: 00-000
+        tag:
+          type: string
+          example: null
+        country:
+          type: string
+          example: Polska
+        gmtId:
+          type: integer
+          example: 30
+        gmtTime:
+          type: string
+          example: 1
+        postcodePolicyAccepted:
+          type: boolean
+          example: true
+        version:
+          type: string
+        company:
+          type: string
+        udid:
+          type: string
+          example: dba00bb19dbaa4887196447e363be3e1
