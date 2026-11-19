@@ -7,7 +7,6 @@ import '../module.dart';
 import '../widgets/error_view.dart';
 import '../zone.dart';
 
-const _step = 0.5;
 const _minTemperature = 5.0;
 const _maxTemperature = 35.0;
 
@@ -75,10 +74,11 @@ class _ZonesScreenState extends State<ZonesScreen> {
     _load();
   }
 
-  void _changeTemperature(Zone zone, double delta) {
-    final target = (zone.setTemperature + delta)
-        .clamp(_minTemperature, _maxTemperature)
-        .toDouble();
+  void _changeTemperature(Zone zone, {required bool up}) {
+    final target = stepTemperature(
+      zone.setTemperature,
+      up: up,
+    ).clamp(_minTemperature, _maxTemperature).toDouble();
     if (target == zone.setTemperature) return;
 
     final existing = _pending[zone.id];
@@ -152,10 +152,10 @@ class _ZonesScreenState extends State<ZonesScreen> {
             _ZoneCard(
               zone: zone,
               onDecrease: zone.setTemperature > _minTemperature
-                  ? () => _changeTemperature(zone, -_step)
+                  ? () => _changeTemperature(zone, up: false)
                   : null,
               onIncrease: zone.setTemperature < _maxTemperature
-                  ? () => _changeTemperature(zone, _step)
+                  ? () => _changeTemperature(zone, up: true)
                   : null,
             ),
         ],

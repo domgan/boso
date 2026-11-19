@@ -55,3 +55,14 @@ class Zone {
 
 /// eModul sends and expects temperatures in tenths of a degree.
 int toTenths(double celsius) => (celsius * 10).round();
+
+/// The next half degree above or below [celsius], so an off-grid value snaps
+/// first: 21.9 goes up to 22.0 and down to 21.5, 22.0 goes up to 22.5.
+double stepTemperature(double celsius, {required bool up}) {
+  const stepTenths = 5;
+  final tenths = toTenths(celsius);
+  final floorSteps = tenths ~/ stepTenths;
+  final ceilSteps = (tenths + stepTenths - 1) ~/ stepTenths;
+  final steps = up ? floorSteps + 1 : ceilSteps - 1;
+  return steps * stepTenths / 10;
+}

@@ -70,4 +70,19 @@ void main() {
     // 21.7 * 10 == 216.99999999999997 in floating point.
     expect(toTenths(21.7), 217);
   });
+
+  group('stepTemperature', () {
+    test('snaps an off-grid value to the nearest half degree first', () {
+      expect(stepTemperature(21.9, up: true), 22.0);
+      expect(stepTemperature(21.9, up: false), 21.5);
+      expect(stepTemperature(21.1, up: true), 21.5);
+      expect(stepTemperature(21.1, up: false), 21.0);
+    });
+
+    test('moves a whole half degree from an on-grid value', () {
+      expect(stepTemperature(22.0, up: true), 22.5);
+      expect(stepTemperature(22.0, up: false), 21.5);
+      expect(stepTemperature(21.5, up: false), 21.0);
+    });
+  });
 }
