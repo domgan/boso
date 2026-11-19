@@ -4,17 +4,32 @@ import 'package:material_ui/material_ui.dart';
 
 import '../emodul_client.dart';
 import '../module.dart';
+import '../strings.dart';
 import '../widgets/error_view.dart';
 import '../zone.dart';
 
 const _minTemperature = 5.0;
 const _maxTemperature = 35.0;
 
-/// Waits for the user to stop tapping before sending, so five taps on "+"
-/// become one request instead of five.
-const _sendDelay = Duration(seconds: 1);
+/// Sends this long after the last tap on −/+ or a duration chip, so five taps
+/// on "+" become one request and there's time to pick a duration.
+const _sendDelay = Duration(seconds: 3);
 
-typedef _PendingChange = ({Timer timer, double target, double previous});
+/// Null means permanent ([Strings.permanent]).
+const _durations = <Duration?>[
+  null,
+  Duration(hours: 1),
+  Duration(hours: 2),
+  Duration(hours: 4),
+  Duration(hours: 8),
+];
+
+typedef _PendingChange = ({
+  Timer timer,
+  double target,
+  double previous,
+  Duration? duration,
+});
 
 class ZonesScreen extends StatefulWidget {
   const ZonesScreen({super.key, required this.client, required this.module});
@@ -82,24 +97,57 @@ class _ZonesScreenState extends State<ZonesScreen> {
     if (target == zone.setTemperature) return;
 
     final existing = _pending[zone.id];
-    existing?.timer.cancel();
-    _pending[zone.id] = (
-      timer: Timer(_sendDelay, () => _send(zone.id)),
-      target: target,
-      previous: existing?.previous ?? zone.setTemperature,
+    setState(() {
+      _schedule(
+        zone.id,
+        target: target,
+        previous: existing?.previous ?? zone.setTemperature,
+        duration: existing?.duration,
+      );
+      _replaceZone(zone.copyWith(setTemperature: target));
+    });
+  }
+
+  void _pickDuration(int zoneId, Duration? duration) {
+    final existing = _pending[zoneId];
+    if (existing == null) return;
+    setState(
+      () => _schedule(
+        zoneId,
+        target: existing.target,
+        previous: existing.previous,
+        duration: duration,
+      ),
     );
-    setState(() => _replaceZone(zone.copyWith(setTemperature: target)));
+  }
+
+  /// Replaces the zone's pending change and restarts its send countdown.
+  void _schedule(
+    int zoneId, {
+    required double target,
+    required double previous,
+    required Duration? duration,
+  }) {
+    _pending[zoneId]?.timer.cancel();
+    _pending[zoneId] = (
+      timer: Timer(_sendDelay, () => _send(zoneId)),
+      target: target,
+      previous: previous,
+      duration: duration,
+    );
   }
 
   Future<void> _send(int zoneId) async {
-    final change = _pending.remove(zoneId);
+    final change = _pending[zoneId];
     if (change == null) return;
+    setState(() => _pending.remove(zoneId));
     final zone = _zones!.firstWhere((z) => z.id == zoneId);
     try {
       await widget.client.setZoneTemperature(
         widget.module.udid,
         zone,
         change.target,
+        duration: change.duration,
       );
     } on EmodulException catch (e) {
       if (!mounted) return;
@@ -109,9 +157,7 @@ class _ZonesScreenState extends State<ZonesScreen> {
           () => _replaceZone(zone.copyWith(setTemperature: change.previous)),
         );
       }
-      _showSnackBar(
-        '${zone.name}: nie udało się ustawić temperatury. ${e.message}',
-      );
+      _showSnackBar(Strings.changeFailed(zone.name, e.message));
     }
   }
 
@@ -146,7 +192,7 @@ class _ZonesScreenState extends State<ZonesScreen> {
           if (zones.isEmpty)
             const Padding(
               padding: EdgeInsets.all(24),
-              child: Center(child: Text('Brak stref w tym sterowniku')),
+              child: Center(child: Text(Strings.noZones)),
             ),
           for (final zone in zones)
             _ZoneCard(
@@ -157,6 +203,8 @@ class _ZonesScreenState extends State<ZonesScreen> {
               onIncrease: zone.setTemperature < _maxTemperature
                   ? () => _changeTemperature(zone, up: true)
                   : null,
+              pending: _pending[zone.id],
+              onPickDuration: (duration) => _pickDuration(zone.id, duration),
             ),
         ],
       ),
@@ -169,69 +217,104 @@ class _ZoneCard extends StatelessWidget {
     required this.zone,
     required this.onDecrease,
     required this.onIncrease,
+    required this.pending,
+    required this.onPickDuration,
   });
 
   final Zone zone;
   final VoidCallback? onDecrease;
   final VoidCallback? onIncrease;
 
+  /// The change waiting to be sent; the duration chips show while it exists.
+  final _PendingChange? pending;
+  final void Function(Duration? duration) onPickDuration;
+
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final current = zone.currentTemperature;
+    final pending = this.pending;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            _buildTemperatureRow(context),
+            if (pending != null) ...[
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
-                  Text(zone.name, style: textTheme.titleMedium),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        current == null
-                            ? 'Brak odczytu'
-                            : 'Teraz ${_formatCelsius(current)}',
+                  for (final duration in _durations)
+                    ChoiceChip(
+                      label: Text(
+                        duration == null
+                            ? Strings.permanent
+                            : Strings.hours(duration.inHours),
                       ),
-                      if (zone.isHeating) ...[
-                        const SizedBox(width: 8),
-                        Icon(
-                          Icons.local_fire_department,
-                          size: 18,
-                          color: Theme.of(context).colorScheme.primary,
-                          semanticLabel: 'Grzeje',
-                        ),
-                      ],
-                    ],
-                  ),
+                      selected: duration == pending.duration,
+                      onSelected: (_) => onPickDuration(duration),
+                    ),
                 ],
               ),
-            ),
-            IconButton.filledTonal(
-              tooltip: 'Obniż temperaturę: ${zone.name}',
-              icon: const Icon(Icons.remove),
-              onPressed: onDecrease,
-            ),
-            SizedBox(
-              width: 80,
-              child: Text(
-                _formatCelsius(zone.setTemperature),
-                textAlign: TextAlign.center,
-                style: textTheme.headlineSmall,
-              ),
-            ),
-            IconButton.filledTonal(
-              tooltip: 'Podnieś temperaturę: ${zone.name}',
-              icon: const Icon(Icons.add),
-              onPressed: onIncrease,
-            ),
+            ],
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTemperatureRow(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final current = zone.currentTemperature;
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(zone.name, style: textTheme.titleMedium),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    current == null
+                        ? Strings.noReading
+                        : Strings.now(_formatCelsius(current)),
+                  ),
+                  if (zone.isHeating) ...[
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.local_fire_department,
+                      size: 18,
+                      color: Theme.of(context).colorScheme.primary,
+                      semanticLabel: Strings.heating,
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+        IconButton.filledTonal(
+          tooltip: Strings.decrease(zone.name),
+          icon: const Icon(Icons.remove),
+          onPressed: onDecrease,
+        ),
+        SizedBox(
+          width: 80,
+          child: Text(
+            _formatCelsius(zone.setTemperature),
+            textAlign: TextAlign.center,
+            style: textTheme.headlineSmall,
+          ),
+        ),
+        IconButton.filledTonal(
+          tooltip: Strings.increase(zone.name),
+          icon: const Icon(Icons.add),
+          onPressed: onIncrease,
+        ),
+      ],
     );
   }
 }

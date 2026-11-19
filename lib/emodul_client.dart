@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'module.dart';
 import 'zone.dart';
+import 'strings.dart';
 
 class EmodulException implements Exception {
   const EmodulException(this.message);
@@ -29,21 +30,28 @@ class EmodulClient {
   final int _userId;
 
   Future<List<Module>> fetchModules() async {
-    final json = await _send('GET', 'modules') as List<dynamic>;
-    return json.cast<Map<String, dynamic>>().map(Module.fromJson).toList();
+    final json = await _send('GET', 'modules');
+    return _parse(
+      () => (json as List<dynamic>)
+          .cast<Map<String, dynamic>>()
+          .map(Module.fromJson)
+          .toList(),
+    );
   }
 
   Future<List<Zone>> fetchZones(String moduleUdid) async {
     final json = await _send('GET', 'modules/$moduleUdid');
-    return Zone.listFromModuleData(json as Map<String, dynamic>);
+    return _parse(() => Zone.listFromModuleData(json as Map<String, dynamic>));
   }
 
-  /// Sets a constant temperature, which overrides the zone's schedule.
+  /// Overrides the zone's schedule with [celsius]: for [duration] if given,
+  /// after which the zone returns to its schedule, otherwise permanently.
   Future<void> setZoneTemperature(
     String moduleUdid,
     Zone zone,
-    double celsius,
-  ) async {
+    double celsius, {
+    Duration? duration,
+  }) async {
     await _send(
       'POST',
       'modules/$moduleUdid/zones',
@@ -51,8 +59,8 @@ class EmodulClient {
         'mode': {
           'id': zone.modeId,
           'parentId': zone.id,
-          'mode': 'constantTemp',
-          'constTempTime': 0,
+          'mode': duration == null ? 'constantTemp' : 'timeLimit',
+          'constTempTime': duration?.inMinutes ?? 0,
           'setTemperature': toTenths(celsius),
           'scheduleIndex': 0,
         },
@@ -76,34 +84,44 @@ class EmodulClient {
       final streamed = await _http.send(request).timeout(_timeout);
       response = await http.Response.fromStream(streamed).timeout(_timeout);
     } on TimeoutException {
-      throw const EmodulException('Serwer eModul nie odpowiada');
+      throw const EmodulException(Strings.serverTimeout);
     } on http.ClientException catch (e) {
-      throw EmodulException('Brak połączenia z eModul (${e.message})');
+      throw EmodulException(Strings.connectionFailed(e.message));
     }
 
     if (response.statusCode == 401) {
-      throw const EmodulException(
-        'Token API jest nieważny. Wygeneruj nowy na emodul.pl i zbuduj apkę ponownie.',
-      );
+      throw const EmodulException(Strings.tokenRevoked);
     }
     if (response.statusCode >= 300) {
-      throw EmodulException('eModul zwrócił błąd ${response.statusCode}');
+      throw EmodulException(Strings.serverError(response.statusCode));
     }
     if (response.body.isEmpty) return null;
     try {
       return jsonDecode(response.body);
     } on FormatException {
-      throw const EmodulException('Niezrozumiała odpowiedź z eModul');
+      throw const EmodulException(Strings.unreadableResponse);
     }
   }
 }
 
+/// A response that doesn't match the spec becomes an [EmodulException] the
+/// screens show, instead of an uncaught error that leaves them loading forever.
+T _parse<T>(T Function() parse) {
+  try {
+    return parse();
+  } on TypeError {
+    throw const EmodulException(Strings.unexpectedData);
+  } on NoSuchMethodError {
+    throw const EmodulException(Strings.unexpectedData);
+  }
+}
+
 int _userIdFromToken(String token) {
-  if (token.isEmpty) throw const FormatException('Brak tokena API');
+  if (token.isEmpty) throw const FormatException(Strings.tokenMissing);
   final parts = token.split('.');
-  if (parts.length != 3) throw const FormatException('Token API nie jest JWT');
+  if (parts.length != 3) throw const FormatException(Strings.tokenNotJwt);
   final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
   final userId = (jsonDecode(payload) as Map<String, dynamic>)['user_id'];
-  if (userId is! int) throw const FormatException('Token API bez user_id');
+  if (userId is! int) throw const FormatException(Strings.tokenWithoutUserId);
   return userId;
 }

@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../strings.dart';
+
 class ErrorView extends StatelessWidget {
   const ErrorView({super.key, required this.message, required this.onRetry});
 
@@ -18,7 +20,7 @@ class ErrorView extends StatelessWidget {
             const SizedBox(height: 16),
             FilledButton.tonal(
               onPressed: onRetry,
-              child: const Text('Spróbuj ponownie'),
+              child: const Text(Strings.retry),
             ),
           ],
         ),

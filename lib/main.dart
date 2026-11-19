@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 import 'emodul_client.dart';
 import 'screens/modules_screen.dart';
+import 'strings.dart';
 
 /// Baked in at build time: `--dart-define-from-file=secrets.json`.
 const _token = String.fromEnvironment('EMODUL_TOKEN');
@@ -46,8 +47,7 @@ class _BuildConfigError extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Text(
-            '$reason.\n\nZbuduj apkę z tokenem z emodul.pl:\n'
-            'flutter run --dart-define-from-file=secrets.json',
+            Strings.buildConfigError(reason),
             textAlign: TextAlign.center,
           ),
         ),

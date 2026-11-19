@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../emodul_client.dart';
 import '../module.dart';
+import '../strings.dart';
 import '../widgets/error_view.dart';
 import 'zones_screen.dart';
 
@@ -49,7 +50,7 @@ class _ModulesScreenState extends State<ModulesScreen> {
       return ZonesScreen(client: widget.client, module: modules.single);
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Wybierz sterownik')),
+      appBar: AppBar(title: const Text(Strings.pickController)),
       body: _buildBody(modules),
     );
   }
@@ -60,7 +61,7 @@ class _ModulesScreenState extends State<ModulesScreen> {
       return const Center(child: CircularProgressIndicator());
     }
     if (modules.isEmpty) {
-      return const Center(child: Text('Brak sterowników na koncie eModul'));
+      return const Center(child: Text(Strings.noControllers));
     }
     return ListView(
       children: [

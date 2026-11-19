@@ -1,25 +1,13 @@
 import 'dart:convert';
 
 import 'package:boso/emodul_client.dart';
+import 'package:boso/strings.dart';
 import 'package:boso/zone.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
-/// Unsigned JWT shaped like the API tokens generated on emodul.pl.
-String _token(Map<String, dynamic> payload) {
-  String part(Object json) =>
-      base64Url.encode(utf8.encode(jsonEncode(json))).replaceAll('=', '');
-  return '${part({'alg': 'HS256'})}.${part(payload)}.signature';
-}
-
-final _validToken = _token({'user_id': 42, 'is_generated': true, 'iat': 1});
-
-http.Response _json(Object body, [int status = 200]) => http.Response(
-  jsonEncode(body),
-  status,
-  headers: {'content-type': 'application/json'},
-);
+import 'fakes.dart';
 
 const _zone = Zone(
   id: 101,
@@ -37,12 +25,12 @@ void main() {
       final client = EmodulClient(
         MockClient((request) async {
           expect(request.url.path, '/api/v1/users/42/modules');
-          expect(request.headers['Authorization'], 'Bearer $_validToken');
-          return _json([
+          expect(request.headers['Authorization'], 'Bearer $validToken');
+          return jsonResponse([
             {'udid': 'abc', 'name': 'L-4X WiFi', 'type': 'zones_controller'},
           ]);
         }),
-        _validToken,
+        validToken,
       );
 
       final modules = await client.fetchModules();
@@ -53,11 +41,11 @@ void main() {
   );
 
   test('rejects tokens that are missing, not a JWT, or lack user_id', () {
-    final httpClient = MockClient((_) async => _json({}));
+    final httpClient = MockClient((_) async => jsonResponse({}));
     for (final token in [
       '',
       'not-a-jwt',
-      _token({'username': 'jan'}),
+      fakeToken({'username': 'jan'}),
     ]) {
       expect(
         () => EmodulClient(httpClient, token),
@@ -72,9 +60,9 @@ void main() {
     final client = EmodulClient(
       MockClient((request) async {
         sent = request;
-        return _json({'id': 210});
+        return jsonResponse({'id': 210});
       }),
-      _validToken,
+      validToken,
     );
 
     await client.setZoneTemperature('abc', _zone, 21.5);
@@ -94,11 +82,60 @@ void main() {
   });
 
   test(
+    'setZoneTemperature with a duration posts timeLimit in minutes',
+    () async {
+      late http.Request sent;
+      final client = EmodulClient(
+        MockClient((request) async {
+          sent = request;
+          return jsonResponse({'id': 210});
+        }),
+        validToken,
+      );
+
+      await client.setZoneTemperature(
+        'abc',
+        _zone,
+        25,
+        duration: const Duration(hours: 4),
+      );
+
+      final mode = (jsonDecode(sent.body) as Map<String, dynamic>)['mode'];
+      expect(mode['mode'], 'timeLimit');
+      expect(mode['constTempTime'], 240);
+      expect(mode['setTemperature'], 250);
+    },
+  );
+
+  test(
+    'zone data that does not match the spec becomes EmodulException',
+    () async {
+      final client = EmodulClient(
+        MockClient(
+          (_) async => jsonResponse({
+            'zones': {
+              'elements': [
+                {'zone': null},
+              ],
+            },
+          }),
+        ),
+        validToken,
+      );
+
+      await expectLater(
+        client.fetchZones('abc'),
+        throwsA(isA<EmodulException>()),
+      );
+    },
+  );
+
+  test(
     'revoked token surfaces as an EmodulException about the token',
     () async {
       final client = EmodulClient(
-        MockClient((_) async => _json({'authenticated': false}, 401)),
-        _validToken,
+        MockClient((_) async => jsonResponse({'authenticated': false}, 401)),
+        validToken,
       );
 
       await expectLater(
@@ -107,7 +144,7 @@ void main() {
           isA<EmodulException>().having(
             (e) => e.message,
             'message',
-            contains('Token API jest nieważny'),
+            Strings.tokenRevoked,
           ),
         ),
       );
@@ -119,7 +156,7 @@ void main() {
     () async {
       final client = EmodulClient(
         MockClient((_) async => http.Response('oops', 500)),
-        _validToken,
+        validToken,
       );
 
       await expectLater(

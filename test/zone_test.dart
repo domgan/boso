@@ -50,13 +50,13 @@ void main() {
       final zones = Zone.listFromModuleData({
         'zones': {
           'elements': [
-            _element(id: 1, name: 'Łazienka'),
-            _element(id: 2, name: 'Ukryta', visibility: false),
+            _element(id: 1, name: 'Bathroom'),
+            _element(id: 2, name: 'Hidden', visibility: false),
           ],
         },
       });
 
-      expect(zones.map((z) => z.name), ['Łazienka']);
+      expect(zones.map((z) => z.name), ['Bathroom']);
       expect(zones.single.currentTemperature, isNull);
       expect(zones.single.isHeating, isFalse);
     });
